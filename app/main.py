@@ -81,6 +81,8 @@ async def pollution_forecast(request: PollutionForecastRequest) -> PollutionFore
     try:
         date_obj = parse_date(extracted_date_str)
         date = date_obj.strftime("%Y-%m-%d")
+        if (date_obj - datetime.now()).days > 15:
+            return PollutionForecastResponse(summary="The date is too far in the future. Please provide a date within the next 16 days.")
     except Exception as e:
         print("Date parsing error:", e)
         date = datetime.now().strftime("%Y-%m-%d")
