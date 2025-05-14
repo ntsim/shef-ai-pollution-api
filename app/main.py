@@ -1,7 +1,5 @@
 from dotenv import load_dotenv
-load_dotenv()
 
-import os
 from datetime import datetime
 from dateutil.parser import parse as parse_date
 
@@ -16,6 +14,9 @@ from pydantic import BaseModel
 
 from openai import OpenAI
 from app.predict import predict_pm25
+
+# Load environment variables
+load_dotenv()
 
 # Initialize OpenAI client
 client = OpenAI()
@@ -67,8 +68,8 @@ async def pollution_forecast(request: PollutionForecastRequest) -> PollutionFore
             model="o4-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that extracts future dates in YYYY-MM-DD format."},
-                {"role": "system", "content": f"The current datetime is {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. You should use this to extract a date from the user's query."},
-                {"role": "user", "content": f"Extract the date from: '{query}'"}
+                {"role": "system", "content": f"The current datetime is {datetime.now().strftime('%A %Y-%m-%d %H:%M:%S')}. You should use this to extract a date from the user's query."},
+                {"role": "user", "content": f"Extract the date from: '{query}' and only return with an exact date string in YYYY-MM-DD format."}
             ]
         )
         extracted_date_str = response.choices[0].message.content.strip()
@@ -81,6 +82,8 @@ async def pollution_forecast(request: PollutionForecastRequest) -> PollutionFore
     try:
         date_obj = parse_date(extracted_date_str)
         date = date_obj.strftime("%Y-%m-%d")
+        if (date_obj - datetime.now()).days > 15:
+            return PollutionForecastResponse(summary="The date is too far in the future. Please provide a date within the next 16 days.")
     except Exception as e:
         print("Date parsing error:", e)
         date = datetime.now().strftime("%Y-%m-%d")
