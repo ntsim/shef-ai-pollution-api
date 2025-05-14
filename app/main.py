@@ -67,8 +67,8 @@ async def pollution_forecast(request: PollutionForecastRequest) -> PollutionFore
             model="o4-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that extracts future dates in YYYY-MM-DD format."},
-                {"role": "system", "content": f"The current datetime is {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. You should use this to extract a date from the user's query."},
-                {"role": "user", "content": f"Extract the date from: '{query}'"}
+                {"role": "system", "content": f"The current datetime is {datetime.now().strftime('%A %Y-%m-%d %H:%M:%S')}. You should use this to extract a date from the user's query."},
+                {"role": "user", "content": f"Extract the date from: '{query}' and only return with an exact date string in YYYY-MM-DD format."}
             ]
         )
         extracted_date_str = response.choices[0].message.content.strip()
