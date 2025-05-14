@@ -12,7 +12,7 @@ def predict_pm25(
     surface_pressures: npt.NDArray
 ) -> str:
     # === Step 1: Load the trained model ===
-    model = joblib.load('app/pm25_model_hgboost.pkl')
+    model = joblib.load('app/pm25_model_hgboost_v2.pkl')
 
     # === Step 2: Define your input data ===
     # Replace these values with real or simulated ones
