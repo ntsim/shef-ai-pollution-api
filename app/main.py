@@ -64,7 +64,7 @@ async def pollution_forecast(request: PollutionForecastRequest) -> PollutionFore
     # Extract date using OpenAI
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="o4-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that extracts future dates in YYYY-MM-DD format."},
                 {"role": "system", "content": f"The current datetime is {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. You should use this to extract a date from the user's query."},
@@ -129,10 +129,10 @@ async def pollution_forecast(request: PollutionForecastRequest) -> PollutionFore
     try:
         weather_summary = "\n".join(f"{k}: {v.tolist()[:3]}..." for k, v in prediction_vars.items())
         summary_response = client.chat.completions.create(
-            model="gpt-4",
+            model="o4-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that summarises a prediction of PM2.5 pollution for a specific future date."},
-                {"role": "system", "content": f"You were asked the question '{query}'. The date is {date}. The PM2.5 prediction is {pm25_prediction}. This is based on the weather data:\n{weather_summary}. Summarise this and explain why the weather may have contributed to the prediction."}
+                {"role": "system", "content": "You are a helpful assistant that summarises a prediction of PM2.5 pollution for a specific future date. You are helpful to the user by helping them plan how the localised pollution to them may affect their day. For example, if the PM2.5 is high, you may suggest they wear a mask or avoid outdoor activities or you may suggest that they don't exaccerbate the pollution levels by taking part in pollution emitting activities like using an open fire, log burner or having a garden bonfire, or using public transpoort instead of using their car etc. Prioitise summarising activities and mitigations that align with the weather forecast - for example, you are unlikely to light a log burner in warm weather anyway, but may have a garden bonfire or BBQ"},
+                {"role": "system", "content": f"You were asked the question '{query}'. The date is {date}. The PM2.5 prediction is {pm25_prediction}. This is based on the weather data:\n{weather_summary}. Summarise this and briefly explain why the weather may have contributed to the prediction, along with suggesting what the user may do to mitigate the pollution or if they need to change their days activites (for example if they should limit excercise outdoors)."},
             ]
         )
         summary = summary_response.choices[0].message.content.strip()
