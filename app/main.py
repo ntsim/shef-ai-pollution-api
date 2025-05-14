@@ -1,7 +1,5 @@
 from dotenv import load_dotenv
-load_dotenv()
 
-import os
 from datetime import datetime
 from dateutil.parser import parse as parse_date
 
@@ -16,6 +14,9 @@ from pydantic import BaseModel
 
 from openai import OpenAI
 from app.predict import predict_pm25
+
+# Load environment variables
+load_dotenv()
 
 # Initialize OpenAI client
 client = OpenAI()
